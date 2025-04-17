@@ -1,36 +1,9 @@
-const puppeteer = require("puppeteer");
-const { setTimeout } = require("timers/promises");
-require("dotenv").config();
+import { openPageAndGetHref } from "./utils.js";
 
 async function run() {
-  const SITE_URL = process.env.SITE_URL;
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
-  const USERNAME = process.env.USERNAME;
-  const PASSWORD = process.env.PASSWORD;
 
-  const start = Date.now();
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
-
-  await page.goto(SITE_URL);
-
-  const usernameSelector = await page.$("#pseudonym_session_unique_id");
-  await usernameSelector.type(USERNAME);
-
-  const passwordSelector = await page.$("#pseudonym_session_password");
-  await passwordSelector.type(PASSWORD);
-
-  const loginButton = await page.waitForSelector(".Button--login");
-  await loginButton.click();
-
-  const courseLinkSelector = await page.waitForSelector(
-    ".ic-DashboardCard__link"
-  );
-
-  const href = await page.evaluate(
-    (anchor) => anchor.getAttribute("href"),
-    courseLinkSelector
-  );
+  const { href, page, browser } = await openPageAndGetHref();
 
   const modulesUrl = COURSE_DOMAIN + href + "/modules";
   console.log("Modules URL >> ", modulesUrl);
@@ -51,7 +24,7 @@ async function run() {
   } else {
     await toggleButtonHandle.click();
 
-    await setTimeout(1000);
+    setTimeout(1000);
     await toggleButtonHandle.click();
   }
 
@@ -84,6 +57,8 @@ async function run() {
 
   console.log("Time taken >> ", Date.now() - start);
   console.log("Completed items >> ", links.length);
+
+  console.timeEnd("AUTOMATION");
 
   await browser.close();
 }
