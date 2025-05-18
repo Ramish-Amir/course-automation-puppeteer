@@ -183,7 +183,7 @@ export const performQuiz = async (page) => {
   return;
 };
 
-export const performQuizV1 = async (page) => {
+export const performQuizV1 = async (page, courseTitle) => {
   // 1) Extract all questions, with either radio-inputs or dropdowns
   const questions = await page.evaluate(() => {
     const questionEls = Array.from(
@@ -217,7 +217,7 @@ export const performQuizV1 = async (page) => {
   });
 
   const aiPayload = JSON.stringify(questions);
-  const aiAnswers = await getAnswersFromAI("Customer Service", aiPayload);
+  const aiAnswers = await getAnswersFromAI(courseTitle, aiPayload);
 
   // 3) Apply those answers into the page
   await page.evaluate(
@@ -228,7 +228,6 @@ export const performQuizV1 = async (page) => {
 
         //  — if radio/true-false
         if (typeof answer.radioIndex === "number") {
-          console.log("NUMBER TYPE FOUND");
           const inputs = qEl.querySelectorAll(
             "input.question_input[type=radio]"
           );

@@ -27,12 +27,17 @@ async function openPageAndGetHref() {
     ".ic-DashboardCard__link"
   );
 
+  const titles = await page.$$eval(
+    'h2[data-testid="dashboard-card-title"]',
+    (elements) => elements.map((el) => el.getAttribute("title"))
+  );
+
   const href = await page.evaluate(
     (anchor) => anchor.getAttribute("href"),
     courseLinkSelector
   );
 
-  return { href, page, browser };
+  return { href, page, browser, courseTitle: titles[0] };
 }
 
 export { openPageAndGetHref };

@@ -31,7 +31,7 @@ async function getQuizUrls(page) {
 }
 
 async function runQuizAgent() {
-  const { href, page, browser } = await openPageAndGetHref();
+  const { href, page, browser, courseTitle } = await openPageAndGetHref();
   try {
     console.log("HREF >>> ", href);
 
@@ -44,6 +44,9 @@ async function runQuizAgent() {
 
     const quizHrefs = await getQuizUrls(page);
     console.log("QUIZ HREFS >>> ", quizHrefs);
+    console.log("COURSE TITLE >>> ", courseTitle);
+
+    return;
 
     for (const quizHref of quizHrefs) {
       await page.goto(COURSE_DOMAIN + quizHref);
@@ -64,7 +67,7 @@ async function runQuizAgent() {
         takeQuizBtn.click(),
       ]);
 
-      await performQuizV1(page);
+      await performQuizV1(page, courseTitle);
     }
   } catch (err) {
     console.log(err);
