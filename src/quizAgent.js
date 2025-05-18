@@ -46,8 +46,6 @@ async function runQuizAgent() {
     console.log("QUIZ HREFS >>> ", quizHrefs);
     console.log("COURSE TITLE >>> ", courseTitle);
 
-    return;
-
     for (const quizHref of quizHrefs) {
       await page.goto(COURSE_DOMAIN + quizHref);
 
