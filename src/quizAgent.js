@@ -1,4 +1,4 @@
-import { performQuiz } from "./quizSimulator.js";
+import { performQuizV1 } from "./quizSimulator.js";
 import { openPageAndGetHref } from "./utils.js";
 
 async function getQuizUrls(page) {
@@ -56,21 +56,15 @@ async function runQuizAgent() {
       if (!frame)
         throw new Error("Couldn’t get the contentFrame for #preview_frame");
 
-      // 5b) If you need the HREF or element handle:
-      const quizhref = await frame.$eval("#take_quiz_link", (el) =>
-        el.getAttribute("href")
-      );
-      console.log("Quiz URL:", quizhref);
-
-      // Rather than going to quizHref, click on this button '#take_quiz_link'
-      const takeQuizBtn = await frame.waitForSelector("#take_quiz_link");
+      // Rather than going to quizHref, click on this button '.take_quiz_link'
+      const takeQuizBtn = await frame.waitForSelector(".take_quiz_button");
 
       await Promise.all([
         page.waitForNavigation({ waitUntil: "networkidle0" }),
         takeQuizBtn.click(),
       ]);
 
-      await performQuiz(page);
+      await performQuizV1(page);
     }
   } catch (err) {
     console.log(err);
