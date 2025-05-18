@@ -3,7 +3,7 @@ import { openPageAndGetHref } from "./utils.js";
 async function run() {
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
 
-  const { href, page, browser } = await openPageAndGetHref();
+  const { href, page, browser } = await openPageAndGetHref({ headless: true });
 
   const modulesUrl = COURSE_DOMAIN + href + "/modules";
   console.log("Modules URL >> ", modulesUrl);
@@ -34,16 +34,8 @@ async function run() {
 
   console.log("LINKS found >> ", links?.length);
 
-  // const tempLinks = [];
-
-  // for (let i = 30; i < 60; i++) {
-  //   tempLinks.push(links[i]);
-  // }
-
   for (const link of links) {
     console.log("Visiting >> ", link);
-    // const client = await page.target().createCDPSession();
-    // await client.send("Target.createTarget", { url: COURSE_DOMAIN + link });
 
     // Open a new tab
     const pageTarget = await browser.newPage();

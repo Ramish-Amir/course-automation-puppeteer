@@ -31,7 +31,9 @@ async function getQuizUrls(page) {
 }
 
 async function runQuizAgent() {
-  const { href, page, browser, courseTitle } = await openPageAndGetHref();
+  const { href, page, browser, courseTitle } = await openPageAndGetHref({
+    headless: false,
+  });
   try {
     console.log("HREF >>> ", href);
 

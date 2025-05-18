@@ -3,13 +3,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-async function openPageAndGetHref() {
+async function openPageAndGetHref({ headless = false }) {
   const SITE_URL = process.env.SITE_URL;
   const USERNAME = process.env.USERNAME;
   const PASSWORD = process.env.PASSWORD;
 
   console.time("AUTOMATION");
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless });
   const page = await browser.newPage();
 
   await page.goto(SITE_URL);
