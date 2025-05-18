@@ -24,7 +24,7 @@ async function run() {
   } else {
     await toggleButtonHandle.click();
 
-    setTimeout(1000);
+    setTimeout(() => {}, 1000);
     await toggleButtonHandle.click();
   }
 
@@ -55,7 +55,6 @@ async function run() {
     await pageTarget.close();
   }
 
-  console.log("Time taken >> ", Date.now() - start);
   console.log("Completed items >> ", links.length);
 
   console.timeEnd("AUTOMATION");
