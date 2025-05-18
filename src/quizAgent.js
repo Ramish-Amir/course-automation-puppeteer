@@ -65,6 +65,22 @@ async function runQuizAgent() {
         takeQuizBtn.click(),
       ]);
 
+      const accessCodeSelector = await page.$("#quiz_access_code");
+
+      if (accessCodeSelector) {
+        // Type access code
+        await accessCodeSelector.type(process.env.ACCESS_CODE);
+
+        // Submit access code
+        const submitButton = await page.$('button.btn[type="submit"]');
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: "networkidle0" }),
+          submitButton.click(),
+        ]);
+      } else {
+        console.log("Access code not required");
+      }
+
       await performQuizV1(page, courseTitle);
     }
   } catch (err) {
