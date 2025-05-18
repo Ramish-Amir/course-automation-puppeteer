@@ -48,7 +48,10 @@ async function runQuizAgent() {
     console.log("QUIZ HREFS >>> ", quizHrefs);
     console.log("COURSE TITLE >>> ", courseTitle);
 
-    for (const quizHref of quizHrefs) {
+    const allAccessCodes = process.env.ACCESS_CODES?.split(", ");
+
+    for (let index = 0; index < quizHrefs?.length; index++) {
+      const quizHref = quizHrefs[index];
       await page.goto(COURSE_DOMAIN + quizHref);
 
       const iframeHandle = await page.waitForSelector("iframe#preview_frame", {
@@ -70,8 +73,17 @@ async function runQuizAgent() {
       const accessCodeSelector = await page.$("#quiz_access_code");
 
       if (accessCodeSelector) {
+        const accessCode = allAccessCodes?.[index];
+
+        console.log("ACCESS CODE >>> ", index, accessCode);
+
+        if (!!!accessCode) {
+          console.log("Access code required but not provided");
+          return;
+        }
+
         // Type access code
-        await accessCodeSelector.type(process.env.ACCESS_CODE);
+        await accessCodeSelector.type(accessCode);
 
         // Submit access code
         const submitButton = await page.$('button.btn[type="submit"]');

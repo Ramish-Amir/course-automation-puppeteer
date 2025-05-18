@@ -32,35 +32,44 @@ async function getAnswersFromAI(courseTitle, questions) {
     `;
 
   const promptV1 = `
-    You are a quiz‑answering assistant with expert knowledge in '${courseTitle}'.  I will give you a JSON array called QUESTIONS.  Each entry is an object:
-
+    You are a quiz‑answering assistant with expert knowledge in '${courseTitle}'. I will give you a JSON array called QUESTIONS. Each entry is an object:
+    
     • text: the full question text  
     • radios: an array (possibly empty) of { value, label } objects for radio/MCQ or true/false questions  
     • selects: an array (possibly empty) of dropdown definitions; each has:
         – name: the form field name  
         – options: an array of { value, label } for each <option>  
-
+    
     For each question object:
     1. If radios.length > 0, ignore selects and pick the one radio option whose label best answers the question.  
     2. Otherwise (radios.length === 0 and selects.length > 0), for each dropdown in selects choose the option whose label best completes the sentence.  
+    
+    Return exactly one answer for each question in the same order.
 
-    Produce exactly one JSON array of length QUESTIONS.length.  For each index i:
-    - If you answered via radios, output { "radioIndex": N } where N is the 0‑based index into QUESTIONS[i].radios.  
-    - If you answered via selects, output { "selectChoices": [c0, c1, …] } where ck is the 0‑based index into QUESTIONS[i].selects[k].options.  
-
-    Do not wrap your answer in any code fences or markdown.  Output the raw JSON array only, with no extra text.
-
+    Return: array<{ radioIndex?: number, selectChoices?: array<number> }>
+    
     Here is the QUESTIONS array:
-
+    
     ${JSON.stringify(questions)}
-`;
+    `;
 
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
     contents: promptV1,
   });
 
-  return JSON.parse(response.text);
+  let answers = response.text;
+
+  if (answers?.startsWith("```json")) {
+    answers = answers
+      .replace(/^```(?:json)?/i, "") // remove opening ```json or ```
+      .replace(/```$/, "") // remove closing ```
+      .trim();
+  }
+
+  console.log("TEXT >> ", answers);
+
+  return JSON.parse(answers);
 }
 
 export { getAnswersFromAI };
