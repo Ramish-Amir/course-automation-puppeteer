@@ -1,9 +1,10 @@
-import { performQuizV1 } from "./quizSimulator.js";
+import { performQuizV2 } from "./quizSimulator.js";
 import { openPageAndGetHref } from "./utils.js";
 
 async function getQuizUrls(page) {
   // Selector for table rows that are student assignments but NOT graded
   const selector = "tr.student_assignment:not(.assignment_graded)";
+  // const selector = "tr.student_assignment"; // For re-attemps
 
   const quizHrefs = await page.$$eval(selector, (tableRows) => {
     const hrefs = []; // Array to store the hrefs
@@ -95,7 +96,7 @@ async function runQuizAgent() {
         console.log("Access code not required");
       }
 
-      await performQuizV1(page, courseTitle);
+      await performQuizV2(page, courseTitle);
     }
   } catch (err) {
     console.log(err);
