@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node src/AttendanceBot/attendanceBot.js",
+    "marking": "node src/index.js",
+    "quiz": "node src/QuizAIAgent/quizAgent.js"
   },
   "keywords": [],
   "author": "",

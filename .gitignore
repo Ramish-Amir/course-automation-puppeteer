@@ -6,5 +6,5 @@ node_modules
 *.html
 *Html.js
 
-src/temp.js
+temp.js
 users.json

@@ -1,5 +1,5 @@
 import { performQuizV2 } from "./quizSimulator.js";
-import { openPageAndGetHref } from "./utils.js";
+import { openPageAndGetHref } from "../utils.js";
 
 async function getQuizUrls(page) {
   // Selector for table rows that are student assignments but NOT graded

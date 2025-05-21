@@ -76,7 +76,7 @@ async function getAnswersFromAI(courseTitle, questions) {
     ---
     
     ### Questions Batch:
-    ${questionsBatch}
+    ${questions}
     `;
 
   const response = await ai.models.generateContent({
