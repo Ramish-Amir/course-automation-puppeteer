@@ -1437,7 +1437,7 @@ export const performQuizV2 = async (page, courseTitle) => {
   console.log("QUESTIONS LENGTH >>", questions.length);
 
   // 2) Batch and get answers
-  const BATCH_SIZE = 30;
+  const BATCH_SIZE = 20;
   const allAnswers = [];
   for (let i = 0; i < questions.length; i += BATCH_SIZE) {
     const batch = questions.slice(i, i + BATCH_SIZE);

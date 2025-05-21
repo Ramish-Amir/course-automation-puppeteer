@@ -8,81 +8,76 @@ const ai = new GoogleGenAI({
 });
 
 async function getAnswersFromAI(courseTitle, questions) {
-  const prompt =
-    `You are an assistant to answer quiz questions for the course: ${courseTitle}.\n` +
-    `Provide a JSON array of answers in the following format:\n` +
-    `
-    General questions example:
-    [
+  const prompt = `You are an AI assistant tasked with answering quiz questions from the course: "${courseTitle}".
+    
+    Your goal is to return a JSON array of answers for a batch of questions. You must follow these rules strictly:
+    
+    1. Match each answer to the corresponding question using its "id".
+    2. Only choose from the "options" or "opts" provided for each question — do NOT invent new IDs or values.
+    3. Use the exact "value" fields from the options given.
+    4. Return the final output in the specified answer format (see below). Do NOT include explanations or formatting like markdown or extra text.
+    5. Don't skip any question, even if there's a question which requires referring to an image or additional information, make the best guess from its given options.
+    
+    ---
+    
+    ### Question Format (input to you):
+    
+    Each question will have the format:
+    
+    For MCQ and Checkbox types:
+    {
+      id: "123",
+      type: "mcq", // or "checkbox"
+      question: "Question text here...",
+      options: [
+        { value: "option_abc123", label: "Option text" },
+        ...
+      ]
+    }
+    
+    For Select type:
+    {
+      id: "456",
+      type: "select",
+      question: "Question text here...",
+      options: [
         {
-        id: "897",
+          name: "select_name_1",
+          opts: [
+            { value: "111", label: "Option A" },
+            { value: "222", label: "Option B" }
+          ]
+        },
+        ...
+      ]
+    }
+    
+    ---
+    
+    ### Your Answer Format (your only output should be this):
+    
+    [
+      {
+        id: "123",
         type: "mcq",
-        question: "Lin Dan is known for:",
-        options: [
-            {
-            value: "question_897_answer_3921_label",
-            label: "Soccer",
-            },
-            {
-            value: "question_897_answer_3959_label",
-            label: "Basketball",
-            },
-            {
-            value: "question_897_answer_8419_label",
-            label: "Volleyball",
-            },
-            {
-            value: "question_897_answer_4790_label",
-            label: "Badminton",
-            },
-        ],
-        },
-        {
-        id: "129834712",
+        answer: ["option_abc123"] // You may choose more than one for checkbox
+      },
+      {
+        id: "456",
         type: "select",
-        question:
-            "What is Ronaldo known for \n" +
-            "[ Select ]\n" +
-            "Basketball\n" +
-            "Soccer\n" +
-            "Badminton\n" +
-            "Cricket\n" +
-            " .",
-        options: [
-            {
-            name: "question_129834712_asdfasd",
-            opts: [
-                { value: "31241", label: "Basketball" },
-                { value: "464", label: "Soccer" },
-                { value: "354", label: "Badminton" },
-                { value: "457", label: "Cricket" },
-            ],
-            },
-        ],
-        },
-    ];
-
-
-    Sample answers example:
-    [
-    // For MCQ or all other types (such as checkbox)
-    {
-        id: "897",
-        type: "mcq", 
-        answer: ["question_897_answer_4790_label"],
-    },
-
-    // For Select type
-    {
-        id: "5040305",
-        type: "select",
-        answer: [ { name: 'question_129834712_asdfasd', value: '464' } ],
-    },
+        answer: [
+          { name: "select_name_1", value: "111" }
+        ]
+      }
     ]
-
-
-    ` +
-    `${questions}`;
+    
+    ONLY respond with a valid JSON array as described above. Do not include any markdown or commentary.
+    
+    ---
+    
+    ### Questions Batch:
+    ${questionsBatch}
+    `;
 
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",

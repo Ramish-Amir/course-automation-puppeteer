@@ -103,7 +103,7 @@ async function runQuizAgent() {
     throw err;
   } finally {
     console.timeEnd("AUTOMATION");
-    // await browser.close();
+    await browser.close();
   }
 }
 
