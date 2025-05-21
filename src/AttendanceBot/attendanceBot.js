@@ -1,13 +1,12 @@
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
+import users from "../../users.json" assert { type: "json" };
 
 dotenv.config();
 
 const SITE_URL = "https://myaolcc.ca/studentportal/login/";
-const USERNAME = process.env.USERNAME;
-const PASSWORD = process.env.PASSWORD;
 
-export const runAttendanceBot = async () => {
+export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
@@ -30,10 +29,23 @@ export const runAttendanceBot = async () => {
   setInterval(() => {}, 1 << 30); // Keeps Node running but does nothing
 };
 
-function delay(time) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time);
-  });
-}
+export const runAttendanceBot = async () => {
+  const attendanceUsers = users;
+
+  if (!attendanceUsers?.length) {
+    console.log("No users found for attendance");
+  }
+
+  for (const { username, password } of attendanceUsers) {
+    console.log("Logging Attendance for: ", username);
+    await launchAttendanceSession(username, password);
+  }
+
+  console.log(`Logged in for ${attendanceUsers.length} users.`);
+
+  //   // Keep script running
+  console.log("Both browsers are running. Press CTRL+C to terminate.");
+  setInterval(() => {}, 1 << 30);
+};
 
 runAttendanceBot();
