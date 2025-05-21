@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const SITE_URL = "https://myaolcc.ca/studentportal/login/";
-const USERNAME = "Mansab.Dar@my-aolcc.com";
-const PASSWORD = "Alyaan786$";
+const USERNAME = process.env.USERNAME;
+const PASSWORD = process.env.PASSWORD;
 
 export const runAttendanceBot = async () => {
   const browser = await puppeteer.launch({ headless: true });
