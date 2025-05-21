@@ -9,6 +9,7 @@ async function openPageAndGetHref({ headless = false }) {
   const PASSWORD = process.env.PASSWORD;
 
   console.time("AUTOMATION");
+  console.log("LOGGING IN AS >>> ", USERNAME);
   const browser = await puppeteer.launch({ headless });
   const page = await browser.newPage();
 

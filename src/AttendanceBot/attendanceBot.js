@@ -12,10 +12,10 @@ export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
 
   await page.goto(SITE_URL);
 
-  const usernameSelector = await page.$("#emailForm");
+  const usernameSelector = await page.waitForSelector("#emailForm");
   await usernameSelector.type(USERNAME);
 
-  const passwordSelector = await page.$("#pwdform");
+  const passwordSelector = await page.waitForSelector("#pwdform");
   await passwordSelector.type(PASSWORD);
 
   const loginButton = await page.waitForSelector(".btnlogin");
@@ -44,7 +44,6 @@ export const runAttendanceBot = async () => {
   console.log(`Logged in for ${attendanceUsers.length} users.`);
 
   //   // Keep script running
-  console.log("Both browsers are running. Press CTRL+C to terminate.");
   setInterval(() => {}, 1 << 30);
 };
 

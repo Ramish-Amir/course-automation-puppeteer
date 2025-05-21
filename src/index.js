@@ -1,6 +1,7 @@
 import { openPageAndGetHref } from "./utils.js";
 
 async function run() {
+  console.log("RUNNING MARKING AUTOMATOR");
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
 
   const { href, page, browser } = await openPageAndGetHref({ headless: true });

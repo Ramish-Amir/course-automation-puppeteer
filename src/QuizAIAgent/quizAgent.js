@@ -32,6 +32,7 @@ async function getQuizUrls(page) {
 }
 
 async function runQuizAgent() {
+  console.log("RUNNING MARKING AUTOMATOR");
   const { href, page, browser, courseTitle } = await openPageAndGetHref({
     headless: false,
   });
