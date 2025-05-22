@@ -4,7 +4,7 @@ import users from "../../users.json" assert { type: "json" };
 
 dotenv.config();
 
-const SITE_URL = "https://myaolcc.ca/studentportal/login/";
+const SITE_URL = process.env.ATTENDANCE_SITE_URL;
 
 export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
   const browser = await puppeteer.launch({ headless: true });
