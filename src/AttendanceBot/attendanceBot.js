@@ -22,14 +22,11 @@ export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
   await loginButton.click();
   await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-  console.log(
-    "Leaving browser open. Press CTRL+C to exit script, then close browser manually."
-  );
-
   setInterval(() => {}, 1 << 30); // Keeps Node running
 };
 
 export const runAttendanceBot = async () => {
+  console.log("\n🚀🚀🚀 STARTING ATTENDANCE LOGIN \n");
   const attendanceUsers = users;
 
   if (!attendanceUsers?.length) {
@@ -37,11 +34,11 @@ export const runAttendanceBot = async () => {
   }
 
   for (const { username, password } of attendanceUsers) {
-    console.log("Logging Attendance for: ", username);
+    console.log("✅  >>> Logging Attendance for: ", username);
     await launchAttendanceSession(username, password);
   }
 
-  console.log(`Logged in for ${attendanceUsers.length} users.`);
+  console.log(`\nLogged in for ${attendanceUsers.length} users.`);
 
   //   // Keep script running
   setInterval(() => {}, 1 << 30);
