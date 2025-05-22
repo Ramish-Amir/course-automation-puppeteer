@@ -14,7 +14,7 @@ async function getAnswersFromAI(courseTitle, questions) {
     
     1. Match each answer to the corresponding question using its "id".
     2. Only choose from the "options" or "opts" provided for each question — do NOT invent new IDs or values.
-    3. Use the exact "value" fields from the options given.
+    3. Please return the exact "value" fields from the options given; while answering. PLEASE DO NOT ALTER. And DO NOT mix-up opts labels with values. NEVER return "label" value in the answer.
     4. Return the final output in the specified answer format (see below). Do NOT include explanations or formatting like markdown or extra text.
     5. Don't skip any question, even if there's a question which requires referring to an image or additional information, make the best guess from its given options.
     

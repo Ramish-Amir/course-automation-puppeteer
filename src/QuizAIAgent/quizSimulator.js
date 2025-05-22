@@ -293,19 +293,25 @@ export const performQuizV2 = async (page, courseTitle) => {
   console.log("AI Answers LENGTH >>>", allAnswers.length);
 
   // 3) Mark answers on page
-  for (const ans of allAnswers) {
-    if (ans.type === "select") {
-      // ans.answer can be string or array for multiple selects
-      const values = Array.isArray(ans.answer) ? ans.answer : [ans.answer];
+  for (const [i, ans] of allAnswers.entries()) {
+    try {
+      if (ans.type === "select") {
+        const values = Array.isArray(ans.answer) ? ans.answer : [ans.answer];
 
-      for (const { name, value } of values) {
-        await page.select(`select[name='${name}']`, value);
+        for (const { name, value } of values) {
+          await page.select(`select[name='${name}']`, value);
+        }
+      } else {
+        for (const answer of ans.answer) {
+          const correctOption = await page.waitForSelector(`#${answer}`, {
+            timeout: 3000,
+          });
+          await correctOption.click();
+        }
       }
-    } else {
-      for (const answer of ans.answer) {
-        const correctOption = await page.waitForSelector(`#${answer}`);
-        await correctOption.click();
-      }
+    } catch (err) {
+      console.warn(`⚠️⚠️⚠️  WARNING: Skipping question ${i + 1}.`);
+      continue;
     }
   }
 

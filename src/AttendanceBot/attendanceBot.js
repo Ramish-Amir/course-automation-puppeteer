@@ -26,7 +26,7 @@ export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
     "Leaving browser open. Press CTRL+C to exit script, then close browser manually."
   );
 
-  setInterval(() => {}, 1 << 30); // Keeps Node running but does nothing
+  setInterval(() => {}, 1 << 30); // Keeps Node running
 };
 
 export const runAttendanceBot = async () => {
