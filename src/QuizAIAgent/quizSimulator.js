@@ -245,6 +245,8 @@ export const performQuizV2 = async (page, courseTitle) => {
         ? "select"
         : questionEl.classList.contains("multiple_answers_question")
         ? "checkbox"
+        : questionEl.classList.contains("matching_question")
+        ? "matching"
         : null;
 
       // TODO: Another type is matching question
@@ -269,23 +271,45 @@ export const performQuizV2 = async (page, courseTitle) => {
             .map((o) => ({ value: o.value, label: o.text }));
           options.push({ name: select.name, opts });
         });
+      } else if (qType === "checkbox") {
+        holder.querySelectorAll("input.question_input").forEach((input) => {
+          const inputId = `${input.id}_label`;
+          const label = holder.querySelector(`#${inputId}`)?.innerText.trim();
+          options.push({ value: inputId, label });
+        });
+      } else if (qType === "matching") {
+        const steps = holder.querySelectorAll(".answer");
+        steps.forEach((step) => {
+          const stepLabel = step.querySelector("label");
+          const stepId = stepLabel.getAttribute("for");
+          const selectEl = step.querySelector("select.question_input");
+
+          if (selectEl) {
+            const opts = Array.from(selectEl.options)
+              .filter((o) => o.value)
+              .map((o) => ({ value: o.value, label: o.text }));
+            options.push({ name: stepId, opts });
+          } else {
+            console.warn(
+              `⚠️⚠️⚠️  WARNING: No select element found for step ${stepId}.`
+            );
+          }
+        });
       }
 
       return { id: assessmentId, type: qType, question: text, options };
     });
   });
 
-  console.log("QUESTIONS LENGTH >>", questions.length);
+  console.log("QUESTIONS");
+  console.log(questions.flatMap((q) => q.options));
 
   // 2) Batch and get answers
   const BATCH_SIZE = 20;
   const allAnswers = [];
   for (let i = 0; i < questions.length; i += BATCH_SIZE) {
     const batch = questions.slice(i, i + BATCH_SIZE);
-    const aiAnswers = await getAnswersFromAI(
-      courseTitle,
-      JSON.stringify(batch)
-    );
+    const aiAnswers = await getAnswersFromAI("MS Word", JSON.stringify(batch));
     console.log(`Batch ${i / BATCH_SIZE + 1} - Answered: ${aiAnswers.length}`);
     allAnswers.push(...aiAnswers);
   }
@@ -295,7 +319,7 @@ export const performQuizV2 = async (page, courseTitle) => {
   // 3) Mark answers on page
   for (const [i, ans] of allAnswers.entries()) {
     try {
-      if (ans.type === "select") {
+      if (ans.type === "select" || ans.type === "matching") {
         const values = Array.isArray(ans.answer) ? ans.answer : [ans.answer];
 
         for (const { name, value } of values) {
