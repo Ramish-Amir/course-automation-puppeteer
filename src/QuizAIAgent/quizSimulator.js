@@ -309,7 +309,10 @@ export const performQuizV2 = async (page, courseTitle) => {
   const allAnswers = [];
   for (let i = 0; i < questions.length; i += BATCH_SIZE) {
     const batch = questions.slice(i, i + BATCH_SIZE);
-    const aiAnswers = await getAnswersFromAI("MS Word", JSON.stringify(batch));
+    const aiAnswers = await getAnswersFromAI(
+      courseTitle,
+      JSON.stringify(batch)
+    );
     console.log(`Batch ${i / BATCH_SIZE + 1} - Answered: ${aiAnswers.length}`);
     allAnswers.push(...aiAnswers);
   }
