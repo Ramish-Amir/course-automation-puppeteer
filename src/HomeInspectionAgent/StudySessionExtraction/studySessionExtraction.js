@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import { cdCourseContentsSummaryHtml } from "../../../HTMLS/cdCourseContentsSummaryHtml.js";
 import { openCdCoursePage } from "../cdCoursePage.js";
+import { writeStudySessionToFile } from "./studySessionStorage.js";
 
 async function extractStudySessionLinks(page) {
   console.log("EXTRACTING STUDY SESSION LINKS");
@@ -52,18 +53,19 @@ export const studySessionExtraction = async () => {
     const links = await extractStudySessionLinks(page);
     console.log("STUDY SESSION LINKS >>> ", links);
 
-    return;
+    for (const moduleName of Object.keys(links)) {
+      console.log("VISITING STUDY SESSION LINK >>> ", moduleName);
 
-    for (const studySessionLink of [links.studySessionLinks[0]]) {
-      console.log("VISITING STUDY SESSION LINK >>> ", studySessionLink);
-      await page.goto(studySessionLink, { waitUntil: "networkidle0" });
+      for (const studySessionLink of links[moduleName]) {
+        await page.goto(studySessionLink, { waitUntil: "networkidle0" });
 
-      // Read the text content of the study session
-      const content = await readStudySessionText(page);
-      if (content) {
-        console.log("STUDY SESSION CONTENT >>> ", content);
-      } else {
-        console.log("No content found for this study session.");
+        // Read the text content of the study session
+        const content = await readStudySessionText(page);
+        if (content) {
+          await writeStudySessionToFile(`${moduleName}.txt`, content);
+        } else {
+          console.log("No content found for this study session.");
+        }
       }
     }
   } catch (error) {
