@@ -45,10 +45,9 @@ export const studySessionExtraction = async () => {
   try {
     console.log("EXTRACTING STUDY SESSIONS");
 
-    const CURRENT_COURSE_URL =
-      "https://training.carsondunlop.com/course/roofing-content/";
+    const CURRENT_CD_COURSE_URL = process.env.CURRENT_CD_COURSE_URL;
 
-    await page.goto(CURRENT_COURSE_URL, { waitUntil: "networkidle0" });
+    await page.goto(CURRENT_CD_COURSE_URL, { waitUntil: "networkidle0" });
 
     const links = await extractStudySessionLinks(page);
     console.log("STUDY SESSION LINKS >>> ", links);
