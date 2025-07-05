@@ -40,6 +40,8 @@ export const runAttendanceBot = async () => {
 
   console.log(`\nLogged in for ${attendanceUsers.length} users.`);
 
+  console.log(new Date().toLocaleString(), " - Attendance Bot is running...");
+
   //   // Keep script running
   setInterval(() => {}, 1 << 30);
 };
