@@ -35,6 +35,7 @@ async function runQuizAgent() {
   console.log("RUNNING MARKING AUTOMATOR");
   const { href, page, browser, courseTitle } = await openPageAndGetHref({
     headless: false,
+    userNumber: parseInt(process.argv[2]) - 1 || 0,
   });
   try {
     console.log("HREF >>> ", href);

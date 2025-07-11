@@ -1,12 +1,12 @@
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
+import users from "../users.json" assert { type: "json" };
 
 dotenv.config();
 
-async function openPageAndGetHref({ headless = false }) {
+async function openPageAndGetHref({ headless = false, userNumber = 0 }) {
   const SITE_URL = process.env.SITE_URL;
-  const USERNAME = process.env.USERNAME;
-  const PASSWORD = process.env.PASSWORD;
+  const { USERNAME, PASSWORD } = getUserCredentials(userNumber);
 
   console.time("AUTOMATION");
   console.log("LOGGING IN AS >>> ", USERNAME);
@@ -39,6 +39,19 @@ async function openPageAndGetHref({ headless = false }) {
   );
 
   return { href, page, browser, courseTitle: titles[0] };
+}
+
+function getUserCredentials(userNumber) {
+  if (!users || !users.length) {
+    throw new Error("No users found in users.json");
+  }
+
+  const user = users[userNumber];
+  if (!user) {
+    throw new Error(`User not found for user number: ${userNumber}`);
+  }
+
+  return { USERNAME: user.username, PASSWORD: user.password };
 }
 
 export { openPageAndGetHref };

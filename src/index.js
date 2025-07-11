@@ -2,9 +2,15 @@ import { openPageAndGetHref } from "./utils.js";
 
 async function run() {
   console.log("RUNNING MARKING AUTOMATOR");
+
+  const userNumber = parseInt(process.argv[2]) - 1 || 0;
+
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
 
-  const { href, page, browser } = await openPageAndGetHref({ headless: true });
+  const { href, page, browser } = await openPageAndGetHref({
+    headless: true,
+    userNumber,
+  });
 
   const modulesUrl = COURSE_DOMAIN + href + "/modules";
   console.log("Modules URL >> ", modulesUrl);
