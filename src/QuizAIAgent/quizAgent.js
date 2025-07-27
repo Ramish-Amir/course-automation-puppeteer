@@ -49,8 +49,6 @@ async function runQuizAgent() {
     console.log("QUIZ HREFS >>> ", quizHrefs);
     console.log("COURSE TITLE >>> ", courseTitle);
 
-    return;
-
     const allAccessCodes = process.env.ACCESS_CODES?.split(", ");
 
     for (let index = 0; index < quizHrefs?.length; index++) {
