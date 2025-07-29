@@ -32,7 +32,7 @@ async function runQuizAgent() {
   console.log("IS FINAL EXAM >>> ", isFinalExam);
 
   const { href, page, browser, courseTitle } = await openPageAndGetHref({
-    headless: false,
+    headless: true,
     userNumber: parseInt(process.argv[2]) - 1 || 0,
   });
   try {
