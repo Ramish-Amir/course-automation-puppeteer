@@ -26,19 +26,40 @@ async function run() {
     toggleButtonHandle
   );
 
+  console.log("TOGGLE VALUE >> ", toggleValue);
+
   if (toggleValue == "Expand All") {
     await toggleButtonHandle.click();
+    await new Promise((r) => setTimeout(r, 200));
   } else {
     await toggleButtonHandle.click();
+    await new Promise((r) => setTimeout(r, 200));
 
-    setTimeout(() => {}, 1000);
+    await new Promise((r) => setTimeout(r, 200));
     await toggleButtonHandle.click();
+    await new Promise((r) => setTimeout(r, 200));
   }
 
-  const links = await page.$$eval("a.ig-title.title.item_link", (anchors) => {
-    return anchors?.map((anchor) => anchor.getAttribute("href"));
-  });
+  const rows = await page.$$(".ig-row"); // Select all module rows
 
+  const links = [];
+
+  for (const row of rows) {
+    // Check if the row contains the "icon-mark-as-read" element
+    const icon = await row.$(".icon-mark-as-read");
+    if (!icon) continue; // Skip if not found
+
+    // Get the anchor inside the same row
+    const anchor = await row.$("a.ig-title.title.item_link");
+    if (!anchor) continue; // Skip if no anchor found
+
+    // Extract the href attribute
+    const href = await (await anchor.getProperty("href")).jsonValue();
+
+    if (href) {
+      links.push(href);
+    }
+  }
   console.log("LINKS found >> ", links?.length);
 
   for (const link of links) {
@@ -48,7 +69,10 @@ async function run() {
     const pageTarget = await browser.newPage();
 
     // Load URL in the new tab
-    await pageTarget.goto(COURSE_DOMAIN + link);
+    await pageTarget.goto(link);
+
+    // Wait for the page to load
+    await new Promise((r) => setTimeout(r, 500));
 
     // Close the new tab
     await pageTarget.close();
