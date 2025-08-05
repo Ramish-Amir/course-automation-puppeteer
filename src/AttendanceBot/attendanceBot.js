@@ -20,7 +20,7 @@ export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
 
   const loginButton = await page.waitForSelector(".btnlogin");
   await loginButton.click();
-  await page.waitForNavigation({ waitUntil: "networkidle0" });
+  // await page.waitForNavigation({ waitUntil: "networkidle0" });
 
   setInterval(() => {}, 1 << 30); // Keeps Node running
 };
