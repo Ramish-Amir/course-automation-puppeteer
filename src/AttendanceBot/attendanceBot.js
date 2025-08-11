@@ -20,9 +20,16 @@ export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
 
   const loginButton = await page.waitForSelector(".btnlogin");
   await loginButton.click();
-  // await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-  setInterval(() => {}, 1 << 30); // Keeps Node running
+  // Schedule browser close after 4.1 hours
+  setTimeout(async () => {
+    try {
+      await browser.close();
+      console.log(`Browser closed for user: ${USERNAME}`);
+    } catch (err) {
+      console.error(`Error closing browser for user ${USERNAME}:`, err);
+    }
+  }, 14760000); // 4.1 hours in milliseconds (14760000)
 };
 
 export const runAttendanceBot = async () => {
@@ -31,19 +38,19 @@ export const runAttendanceBot = async () => {
 
   if (!attendanceUsers?.length) {
     console.log("No users found for attendance");
+    return;
   }
 
   for (const { username, password } of attendanceUsers) {
     console.log("✅  >>> Logging Attendance for: ", username);
+    // Don't await, start session in background
     await launchAttendanceSession(username, password);
   }
 
   console.log(`\nLogged in for ${attendanceUsers.length} users.`);
-
   console.log(new Date().toLocaleString(), " - Attendance Bot is running...");
 
-  //   // Keep script running
-  setInterval(() => {}, 1 << 30);
+  // setInterval(() => {}, 1 << 30); // Keeps Node running
 };
 
 runAttendanceBot();
