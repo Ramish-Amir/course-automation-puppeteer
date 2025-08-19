@@ -72,7 +72,7 @@ async function run() {
     await pageTarget.goto(link);
 
     // Wait for the page to load
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 1000));
 
     // Close the new tab
     await pageTarget.close();
