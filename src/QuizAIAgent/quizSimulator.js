@@ -301,8 +301,7 @@ export const performQuizV2 = async (page, courseTitle) => {
     });
   });
 
-  console.log("QUESTIONS");
-  console.log(questions.flatMap((q) => q.options));
+  console.log("QUESTIONS >>> ", questions.length);
 
   // 2) Batch and get answers
   const BATCH_SIZE = 20;

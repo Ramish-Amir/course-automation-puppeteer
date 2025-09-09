@@ -63,6 +63,15 @@ async function runQuizAgent() {
       if (!frame)
         throw new Error("Couldn’t get the contentFrame for #preview_frame");
 
+      try {
+        const title = await frame.$eval("h1#quiz_title", (el) =>
+          el.textContent.trim()
+        );
+        console.log(`\n>>> ${title}`);
+      } catch (error) {
+        console.log(`Quiz Title Not Found`);
+      }
+
       // Rather than going to quizHref, click on this button '.take_quiz_link'
       const takeQuizBtn = await frame.waitForSelector(".take_quiz_button");
 

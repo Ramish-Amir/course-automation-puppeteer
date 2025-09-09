@@ -93,8 +93,6 @@ async function getAnswersFromAI(courseTitle, questions) {
       .trim();
   }
 
-  console.log("TEXT >> ", answers);
-
   return JSON.parse(answers);
 }
 
