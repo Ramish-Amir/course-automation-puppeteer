@@ -8,7 +8,7 @@ async function run() {
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
 
   const { href, page, browser } = await openPageAndGetHref({
-    headless: false,
+    headless: true,
     userNumber,
   });
 
