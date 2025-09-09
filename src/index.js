@@ -8,7 +8,7 @@ async function run() {
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
 
   const { href, page, browser } = await openPageAndGetHref({
-    headless: true,
+    headless: false,
     userNumber,
   });
 
@@ -62,20 +62,55 @@ async function run() {
   }
   console.log("LINKS found >> ", links?.length);
 
-  for (const link of links) {
-    console.log("Visiting >> ", link);
+  if (links.length === 0) {
+    console.log("NO LINKS FOUND");
+    await browser.close();
+    return;
+  }
 
-    // Open a new tab
-    const pageTarget = await browser.newPage();
+  await page.goto(links[0]);
 
-    // Load URL in the new tab
-    await pageTarget.goto(link);
+  let lessonsFinished = false;
+  let lessonNumber = 1;
+  while (!lessonsFinished) {
+    // Print the page title (h1.page-title) only if it exists
+    try {
+      const title = await page.$eval("h1.page-title", (el) =>
+        el.textContent.trim()
+      );
+      console.log(`${lessonNumber}: ${title}`);
+    } catch (error) {
+      console.log(`${lessonNumber}: Quiz`);
+    }
+    lessonNumber++;
 
-    // Wait for the page to load
-    await new Promise((r) => setTimeout(r, 1000));
+    // Find "Next" button and click it
+    try {
+      const nextLessonBtn = await page.waitForSelector(
+        'a[aria-label="Next Module Item"]'
+      );
 
-    // Close the new tab
-    await pageTarget.close();
+      if (!nextLessonBtn) {
+        lessonsFinished = true;
+        break;
+      }
+
+      // Scroll the element into view before clicking
+      await nextLessonBtn.scrollIntoView();
+
+      // Wait a moment for the scroll to complete
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Verify it's now clickable
+      await nextLessonBtn.isIntersectingViewport();
+
+      await nextLessonBtn.click();
+      await page.waitForNavigation({ waitUntil: "networkidle0" });
+    } catch (error) {
+      console.log("NEXT LESSON BUTTON NOT FOUND");
+      lessonsFinished = true;
+      break;
+    }
   }
 
   console.log("Completed items >> ", links.length);

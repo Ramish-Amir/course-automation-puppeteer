@@ -8,7 +8,7 @@
     "dev": "node src/AttendanceBot/attendanceBot.js",
     "marking": "node src/index.js",
     "quiz": "node src/QuizAIAgent/quizAgent.js",
-    "test": "node src/QuizAIAgent/temp.js",
+    "test": "node src/testing/testing.js",
     "cd_marking": "node src/HomeInspectionAgent/courseMarking.js",
     "extract_ss": "node src/HomeInspectionAgent/StudySessionExtraction/StudySessionExtraction.js"
   },
