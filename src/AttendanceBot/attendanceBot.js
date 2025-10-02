@@ -21,15 +21,17 @@ export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
   const loginButton = await page.waitForSelector(".btnlogin");
   await loginButton.click();
 
-  // Schedule browser close after 4.1 hours
-  setTimeout(async () => {
-    try {
-      await browser.close();
-      console.log(`Browser closed for user: ${USERNAME}`);
-    } catch (err) {
-      console.error(`Error closing browser for user ${USERNAME}:`, err);
-    }
-  }, 14760000); // 4.1 hours in milliseconds (14760000)
+  await page.waitForNavigation();
+
+  // // Schedule browser close after 4.1 hours
+  // setTimeout(async () => {
+  //   try {
+  //     await browser.close();
+  //     console.log(`Browser closed for user: ${USERNAME}`);
+  //   } catch (err) {
+  //     console.error(`Error closing browser for user ${USERNAME}:`, err);
+  //   }
+  // }, 14760000); // 4.1 hours in milliseconds (14760000)
 };
 
 export const runAttendanceBot = async () => {
