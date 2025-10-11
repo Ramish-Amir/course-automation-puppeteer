@@ -341,6 +341,46 @@ export const performQuizV2 = async (page, courseTitle) => {
     }
   }
 
+  // 4) Wait randomly between 10–12 minutes before submitting
+  const min = 10 * 60 * 1000; // 10 minutes in ms
+  const max = 12 * 60 * 1000; // 12 minutes in ms
+  const delay = Math.floor(Math.random() * (max - min + 1)) + min;
+
+  console.log(
+    `⏳ Waiting ${(delay / 60000).toFixed(2)} minutes before submitting...`
+  );
+
+  await new Promise((resolve) => setTimeout(resolve, delay));
+
   await page.click("#submit_quiz_button");
-  await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+  // Wait for navigation with better error handling
+  try {
+    await page.waitForNavigation({
+      waitUntil: "networkidle0",
+      timeout: 60000, // Increase timeout to 60 seconds
+    });
+    console.log("✅ Quiz submitted successfully - navigation completed");
+  } catch (error) {
+    console.log(
+      "⚠️ Navigation timeout - checking if quiz was submitted anyway..."
+    );
+
+    // Check if we're on a different page or if there's a success message
+    const currentUrl = page.url();
+    console.log("Current URL after submit:", currentUrl);
+
+    // Look for success indicators
+    try {
+      const successMessage = await page.$eval(
+        ".quiz-submission-success, .success-message, .submission-complete",
+        (el) => el.textContent.trim()
+      );
+      console.log("✅ Quiz submission successful:", successMessage);
+    } catch (e) {
+      console.log(
+        "❌ Could not confirm quiz submission - may need manual check"
+      );
+    }
+  }
 };

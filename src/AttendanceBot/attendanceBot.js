@@ -7,7 +7,7 @@ dotenv.config();
 const SITE_URL = process.env.ATTENDANCE_SITE_URL;
 
 export const launchAttendanceSession = async (USERNAME, PASSWORD) => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
   await page.goto(SITE_URL);
