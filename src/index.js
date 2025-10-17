@@ -1,16 +1,31 @@
 import { openPageAndGetHref } from "./utils.js";
 
 async function run() {
-  console.log("RUNNING MARKING AUTOMATOR");
+  console.log("🚀 RUNNING MARKING AUTOMATOR");
+  console.log("⏰ Starting timer...");
+  console.time("TOTAL_RUNTIME");
 
   const userNumber = parseInt(process.argv[2]) - 1 || 0;
+  console.log(`👤 Using user number: ${userNumber}`);
 
   const COURSE_DOMAIN = process.env.COURSE_DOMAIN;
+  console.log(`🌐 Course domain: ${COURSE_DOMAIN}`);
 
-  const { href, page, browser } = await openPageAndGetHref({
-    headless: true,
-    userNumber,
-  });
+  console.log("🔗 Starting page and href extraction...");
+  let href, page, browser;
+  try {
+    const result = await openPageAndGetHref({
+      headless: true,
+      userNumber,
+    });
+    href = result.href;
+    page = result.page;
+    browser = result.browser;
+  } catch (error) {
+    console.log("❌ Error during page and href extraction:", error.message);
+    console.log("📊 Error details:", error);
+    throw error;
+  }
 
   const modulesUrl = COURSE_DOMAIN + href + "/modules";
   console.log("Modules URL >> ", modulesUrl);
