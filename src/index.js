@@ -1,3 +1,4 @@
+import { performQuizV2 } from "./QuizAIAgent/quizSimulator.js";
 import { openPageAndGetHref } from "./utils.js";
 
 async function run() {
@@ -12,15 +13,16 @@ async function run() {
   console.log(`🌐 Course domain: ${COURSE_DOMAIN}`);
 
   console.log("🔗 Starting page and href extraction...");
-  let href, page, browser;
+  let href, page, browser, courseTitle;
   try {
     const result = await openPageAndGetHref({
-      headless: true,
+      headless: false,
       userNumber,
     });
     href = result.href;
     page = result.page;
     browser = result.browser;
+    courseTitle = result.courseTitle;
   } catch (error) {
     console.log("❌ Error during page and href extraction:", error.message);
     console.log("📊 Error details:", error);
@@ -96,11 +98,24 @@ async function run() {
       console.log(`${lessonNumber}: ${title}`);
     } catch (error) {
       console.log(`${lessonNumber}: Quiz`);
+
+      // Rather than going to quizHref, click on this button '.take_quiz_link'
+      const takeQuizBtn = await page.waitForSelector(".take_quiz_button");
+
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+        takeQuizBtn.click(),
+      ]);
+
+      await performQuizV2(page, courseTitle || "");
     }
     lessonNumber++;
 
     // Find "Next" button and click it
     try {
+      // Wait a moment for the button to appear
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       const nextLessonBtn = await page.waitForSelector(
         'a[aria-label="Next Module Item"]'
       );

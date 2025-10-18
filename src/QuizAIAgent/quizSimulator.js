@@ -342,8 +342,8 @@ export const performQuizV2 = async (page, courseTitle) => {
   }
 
   // 4) Wait randomly between 10–12 minutes before submitting
-  const min = 10 * 60 * 1000; // 10 minutes in ms
-  const max = 12 * 60 * 1000; // 12 minutes in ms
+  const min = 2 * 60 * 1000; // 10 minutes in ms
+  const max = 4 * 60 * 1000; // 12 minutes in ms
   const delay = Math.floor(Math.random() * (max - min + 1)) + min;
 
   console.log(
