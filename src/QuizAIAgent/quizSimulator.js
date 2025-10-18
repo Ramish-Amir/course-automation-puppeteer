@@ -341,13 +341,19 @@ export const performQuizV2 = async (page, courseTitle) => {
     }
   }
 
-  // 4) Wait randomly between 10–12 minutes before submitting
-  const min = 2 * 60 * 1000; // 10 minutes in ms
-  const max = 4 * 60 * 1000; // 12 minutes in ms
+  // 4) Wait randomly between 5–7 minutes before submitting
+  const min = 5 * 60 * 1000; // 5 minutes in ms
+  const max = 7 * 60 * 1000; // 7 minutes in ms
   const delay = Math.floor(Math.random() * (max - min + 1)) + min;
 
   console.log(
     `⏳ Waiting ${(delay / 60000).toFixed(2)} minutes before submitting...`
+  );
+
+  // Also log the time at which quiz will be submitted after delay
+  const submitTime = new Date(Date.now() + delay);
+  console.log(
+    `🕒 Quiz will be submitted at: ${submitTime.toLocaleTimeString()}`
   );
 
   await new Promise((resolve) => setTimeout(resolve, delay));
