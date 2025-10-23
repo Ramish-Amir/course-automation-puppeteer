@@ -43,6 +43,46 @@ async function openPageAndGetHref({ headless = false, userNumber = 0 }) {
   );
   await canvasButton.click();
 
+  // Wait for the Canvas tab to open and then close it after 1 second
+  console.log("⏳ Waiting for Canvas tab to open...");
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds for tab to open
+
+  // Get all pages/tabs
+  const pages = await browser.pages();
+  console.log(`📄 Found ${pages.length} tabs`);
+
+  // Close the 3rd tab (Canvas tab) if it exists
+  if (pages.length >= 3) {
+    console.log("🗑️ Closing 3rd tab (Canvas tab)...");
+    await pages[2].close(); // Close the 3rd tab (index 2)
+    console.log("✅ 3rd tab closed");
+  }
+
+  // Optionally close the 1st tab (empty tab) if it exists and is empty
+  if (pages.length >= 2) {
+    const firstTab = pages[0];
+    const firstTabUrl = firstTab.url();
+    console.log(`🔍 First tab URL: ${firstTabUrl}`);
+
+    // Close first tab if it's empty or just the default new tab page
+    if (
+      firstTabUrl === "about:blank" ||
+      firstTabUrl.includes("chrome://") ||
+      firstTabUrl === ""
+    ) {
+      console.log("🗑️ Closing 1st tab (empty tab)...");
+      await firstTab.close();
+      console.log("✅ 1st tab closed");
+    }
+  }
+
+  // Make sure we're working with the 2nd tab (now the active tab)
+  const remainingPages = await browser.pages();
+  if (remainingPages.length > 0) {
+    page = remainingPages[0]; // Use the first remaining tab
+    console.log("✅ Switched to active tab");
+  }
+
   // Wait a bit for the page to fully load
   console.log("⏳ Waiting for page to fully load...");
   await new Promise((resolve) => setTimeout(resolve, 1000));
