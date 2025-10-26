@@ -16,7 +16,7 @@ async function run() {
   let href, page, browser, courseTitle;
   try {
     const result = await openPageAndGetHref({
-      headless: false,
+      headless: true,
       userNumber,
     });
     href = result.href;

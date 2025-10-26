@@ -126,7 +126,10 @@ function getUserCredentials(userNumber) {
     throw new Error(`User not found for user number: ${userNumber}`);
   }
 
-  return { USERNAME: user.username, PASSWORD: user.password };
+  return {
+    USERNAME: user.username,
+    PASSWORD: user.canvasPassword || user.password,
+  };
 }
 
 export { openPageAndGetHref };
