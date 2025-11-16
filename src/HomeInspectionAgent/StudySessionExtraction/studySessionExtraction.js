@@ -61,7 +61,7 @@ export const studySessionExtraction = async () => {
         // Read the text content of the study session
         const content = await readStudySessionText(page);
         if (content) {
-          await writeStudySessionToFile(`${moduleName}.txt`, content);
+          await writeStudySessionToFile(`Study_sessions.txt`, content);
         } else {
           console.log("No content found for this study session.");
         }
