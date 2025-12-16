@@ -21,7 +21,7 @@ async function getQuizUrls(page, isFinalExam) {
     isFinalExam
   );
 
-  return quizHrefs;
+  return ["/courses/61133/assignments/211291/submissions/30149"];
 }
 
 async function runQuizAgent() {
@@ -105,7 +105,7 @@ async function runQuizAgent() {
         console.log("Access code not required");
       }
 
-      await performQuizV2(page, courseTitle);
+      await performQuizV2(page, "Windows Client");
     }
   } catch (err) {
     console.log(err);
