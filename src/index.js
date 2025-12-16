@@ -29,7 +29,7 @@ async function run() {
     throw error;
   }
 
-  const modulesUrl = COURSE_DOMAIN + "/courses/61133" + "/modules";
+  const modulesUrl = COURSE_DOMAIN + href + "/modules";
   console.log("Modules URL >> ", modulesUrl);
 
   await page.goto(modulesUrl);
@@ -107,7 +107,7 @@ async function run() {
         takeQuizBtn.click(),
       ]);
 
-      await performQuizV2(page, courseTitle || "");
+      await performQuizV2(page, "Windows Client");
     }
     lessonNumber++;
 
