@@ -80,7 +80,7 @@ async function getAnswersFromAI(courseTitle, questions) {
     `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite",
+    model: "gemini-2.5-flash",
     contents: prompt,
   });
 

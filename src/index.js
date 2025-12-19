@@ -107,7 +107,7 @@ async function run() {
         takeQuizBtn.click(),
       ]);
 
-      await performQuizV2(page, "Windows Client");
+      await performQuizV2(page, courseTitle);
     }
     lessonNumber++;
 
