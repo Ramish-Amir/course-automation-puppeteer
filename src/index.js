@@ -81,7 +81,6 @@ async function run() {
 
   if (links.length === 0) {
     console.log("NO LINKS FOUND");
-    await browser.close();
     return;
   }
 
@@ -150,4 +149,7 @@ async function run() {
   // await browser.close();
 }
 
-run();
+run().catch((error) => {
+  console.log("❌ Error:", error.message);
+  console.log("📊 Error details:", error);
+});
