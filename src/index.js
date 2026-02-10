@@ -16,7 +16,7 @@ async function run() {
   let href, page, browser, courseTitle;
   try {
     const result = await openPageAndGetHref({
-      headless: true,
+      headless: false,
       userNumber,
     });
     href = result.href;
@@ -26,7 +26,7 @@ async function run() {
   } catch (error) {
     console.log("❌ Error during page and href extraction:", error.message);
     console.log("📊 Error details:", error);
-    throw error;
+    // throw error;
   }
 
   const modulesUrl = COURSE_DOMAIN + href + "/modules";
@@ -147,7 +147,7 @@ async function run() {
 
   console.timeEnd("AUTOMATION");
 
-  await browser.close();
+  // await browser.close();
 }
 
 run();
