@@ -16,7 +16,7 @@ async function run() {
   let href, page, browser, courseTitle;
   try {
     const result = await openPageAndGetHref({
-      headless: false,
+      headless: true,
       userNumber,
     });
     href = result.href;
@@ -35,12 +35,12 @@ async function run() {
   await page.goto(modulesUrl);
 
   const toggleButtonHandle = await page.waitForSelector(
-    "button#expand_collapse_all"
+    "button#expand_collapse_all",
   );
 
   const toggleValue = await page.evaluate(
     (btn) => btn.textContent,
-    toggleButtonHandle
+    toggleButtonHandle,
   );
 
   console.log("TOGGLE VALUE >> ", toggleValue);
@@ -92,21 +92,40 @@ async function run() {
     // Print the page title (h1.page-title) only if it exists
     try {
       const title = await page.$eval("h1.page-title", (el) =>
-        el.textContent.trim()
+        el.textContent.trim(),
       );
       console.log(`${lessonNumber}: ${title}`);
     } catch (error) {
       console.log(`${lessonNumber}: Quiz`);
 
-      // Rather than going to quizHref, click on this button '.take_quiz_link'
-      const takeQuizBtn = await page.waitForSelector(".take_quiz_button");
+      const quizTitle = await page.$eval("h1#quiz_title", (el) =>
+        el.textContent.trim(),
+      );
+      console.log(`${lessonNumber}: ${quizTitle}`);
 
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-        takeQuizBtn.click(),
-      ]);
+      // if (quizTitle.toLowerCase().includes("questions")) {
+      //   console.log("UNGRADED QUIZ FOUND");
 
-      await performQuizV2(page, courseTitle);
+      //   // No need to take the quiz, just click on the next lesson button
+      //   const nextLessonBtn = await page.waitForSelector(
+      //     'a[aria-label="Next Module Item"]',
+      //   );
+      //   await nextLessonBtn.click();
+      //   await page.waitForNavigation({ waitUntil: "networkidle0" });
+      //   continue;
+      // }
+
+      if (!quizTitle.toLowerCase().includes("questions")) {
+        // Rather than going to quizHref, click on this button '.take_quiz_link'
+        const takeQuizBtn = await page.waitForSelector(".take_quiz_button");
+
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: "networkidle0" }),
+          takeQuizBtn.click(),
+        ]);
+
+        await performQuizV2(page, courseTitle);
+      }
     }
     lessonNumber++;
 
@@ -116,7 +135,7 @@ async function run() {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const nextLessonBtn = await page.waitForSelector(
-        'a[aria-label="Next Module Item"]'
+        'a[aria-label="Next Module Item"]',
       );
 
       if (!nextLessonBtn) {
