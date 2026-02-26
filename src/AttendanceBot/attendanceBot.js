@@ -1,8 +1,16 @@
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
-import users from "../../users.json" assert { type: "json" };
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const users = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../../users.json"), "utf8")
+);
 
 const SITE_URL = process.env.ATTENDANCE_SITE_URL;
 

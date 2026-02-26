@@ -3,12 +3,15 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { writeFile } from "fs/promises";
-import users from "../users.json" assert { type: "json" };
+import fs from "fs";
 import { waitForOTP } from "./otpReader.js";
 
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const users = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../users.json"), "utf8")
+);
 
 async function openPageAndGetHref({ headless = false, userNumber = 0 }) {
   try {
@@ -45,23 +48,23 @@ async function openPageAndGetHref({ headless = false, userNumber = 0 }) {
 
     await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-    // OTP flow: empty otp.txt, then select Text Message, continue, wait for navigation, read OTP, enter and verify
-    const otpPath = path.join(__dirname, "otp.txt");
-    await writeFile(otpPath, "", "utf8");
-    console.log("📱 Selecting Text Message and continuing...");
-    const textMessageRadio = await page.waitForSelector("#MainContent_rblMethod_0");
-    await textMessageRadio.click();
-    const continueBtn = await page.waitForSelector("#MainContent_btnContinue");
-    await continueBtn.click();
-    await page.waitForNavigation({ waitUntil: "networkidle0" });
+    // // OTP flow: empty otp.txt, then select Text Message, continue, wait for navigation, read OTP, enter and verify
+    // const otpPath = path.join(__dirname, "otp.txt");
+    // await writeFile(otpPath, "", "utf8");
+    // console.log("📱 Selecting Text Message and continuing...");
+    // const textMessageRadio = await page.waitForSelector("#MainContent_rblMethod_0");
+    // await textMessageRadio.click();
+    // const continueBtn = await page.waitForSelector("#MainContent_btnContinue");
+    // await continueBtn.click();
+    // await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-    console.log("📖 Reading OTP from file...");
-    const otp = await waitForOTP(otpPath);
-    console.log("✏️ Entering OTP and verifying...");
-    await page.type("#MainContent_txtOTP", otp);
-    const verifyBtn = await page.waitForSelector("#MainContent_btnVerify");
-    await verifyBtn.click();
-    await page.waitForNavigation({ waitUntil: "networkidle0" });
+    // console.log("📖 Reading OTP from file...");
+    // const otp = await waitForOTP(otpPath);
+    // console.log("✏️ Entering OTP and verifying...");
+    // await page.type("#MainContent_txtOTP", otp);
+    // const verifyBtn = await page.waitForSelector("#MainContent_btnVerify");
+    // await verifyBtn.click();
+    // await page.waitForNavigation({ waitUntil: "networkidle0" });
 
     const canvasButton = await page.waitForSelector(
       "#anchortagcanvasforinactivestudent",

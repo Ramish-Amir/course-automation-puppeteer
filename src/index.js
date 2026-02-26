@@ -16,7 +16,7 @@ async function run() {
   let href, page, browser, courseTitle;
   try {
     const result = await openPageAndGetHref({
-      headless: false,
+      headless: true,
       userNumber,
     });
     href = result.href;
@@ -89,69 +89,86 @@ async function run() {
   let lessonsFinished = false;
   let lessonNumber = 1;
   while (!lessonsFinished) {
-    // Print the page title (h1.page-title) only if it exists
+    // Get page title - try multiple selectors for different page types
+    let title = "";
+    let isAssignmentPage = false;
+
     try {
-      const title = await page.$eval("h1.page-title", (el) =>
-        el.textContent.trim(),
-      );
-      console.log(`${lessonNumber}: ${title}`);
-    } catch (error) {
-      console.log(`${lessonNumber}: Quiz`);
-
-      const quizTitle = await page.$eval("h1#quiz_title", (el) =>
-        el.textContent.trim(),
-      );
-      console.log(`${lessonNumber}: ${quizTitle}`);
-
-      // if (quizTitle.toLowerCase().includes("questions")) {
-      //   console.log("UNGRADED QUIZ FOUND");
-
-      //   // No need to take the quiz, just click on the next lesson button
-      //   const nextLessonBtn = await page.waitForSelector(
-      //     'a[aria-label="Next Module Item"]',
-      //   );
-      //   await nextLessonBtn.click();
-      //   await page.waitForNavigation({ waitUntil: "networkidle0" });
-      //   continue;
-      // }
-
-      if (!quizTitle.toLowerCase().includes("questions")) {
-        // Rather than going to quizHref, click on this button '.take_quiz_link'
-        const takeQuizBtn = await page.waitForSelector(".take_quiz_button");
-
-        await Promise.all([
-          page.waitForNavigation({ waitUntil: "networkidle0" }),
-          takeQuizBtn.click(),
-        ]);
-
-        await performQuizV2(page, courseTitle);
+      title = await page.$eval("h1.page-title", (el) => el.textContent.trim());
+    } catch {
+      try {
+        title = await page.$eval("h1#quiz_title", (el) =>
+          el.textContent.trim(),
+        );
+      } catch {
+        // Assignment pages: get title from document or [data-testid="title"]
+        try {
+          title =
+            (await page.$eval("[data-testid='title']", (el) =>
+              el.textContent.trim(),
+            )) || (await page.title());
+        } catch {
+          title = await page.title();
+        }
       }
     }
+
+    // Check if this is an assignment page (Practice Exercise or Submission)
+    const titleLower = title.toLowerCase();
+    isAssignmentPage =
+      titleLower.includes("practice exercise") ||
+      titleLower.includes("submission");
+
+    if (isAssignmentPage) {
+      console.log(`${lessonNumber}: ${title} (Assignment - skipping)`);
+    } else {
+      console.log(`${lessonNumber}: ${title}`);
+    }
+
+    // For quiz pages (not assignment), perform the quiz
+    if (!isAssignmentPage) {
+      try {
+        const quizTitle = await page.$eval("h1#quiz_title", (el) =>
+          el.textContent.trim(),
+        );
+        if (!quizTitle.toLowerCase().includes("questions")) {
+          const takeQuizBtn = await page.waitForSelector(".take_quiz_button");
+          await Promise.all([
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+            takeQuizBtn.click(),
+          ]);
+          await performQuizV2(page, courseTitle);
+        }
+      } catch {
+        // Not a quiz page, continue
+      }
+    }
+
     lessonNumber++;
 
     // Find "Next" button and click it
     try {
-      // Wait a moment for the button to appear
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const nextLessonBtn = await page.waitForSelector(
-        'a[aria-label="Next Module Item"]',
-      );
+      let nextLessonBtn = await page
+        .waitForSelector('a[aria-label="Next Module Item"]', { timeout: 5000 })
+        .catch(() => null);
+
+      // Assignment pages use a different Next button selector
+      if (!nextLessonBtn && isAssignmentPage) {
+        nextLessonBtn = await page.waitForSelector(
+          'a[data-testid="next-assignment-btn"]',
+        );
+      }
 
       if (!nextLessonBtn) {
         lessonsFinished = true;
         break;
       }
 
-      // Scroll the element into view before clicking
       await nextLessonBtn.scrollIntoView();
-
-      // Wait a moment for the scroll to complete
       await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Verify it's now clickable
       await nextLessonBtn.isIntersectingViewport();
-
       await nextLessonBtn.click();
       await page.waitForNavigation({ waitUntil: "networkidle0" });
     } catch (error) {
